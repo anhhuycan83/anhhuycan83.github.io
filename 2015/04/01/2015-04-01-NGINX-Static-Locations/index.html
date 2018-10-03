@@ -3,15 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Archives | Hexo</title>
+  <title>Static NGINX Locations | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/archives/index.html">
+  <meta name="description" content="I try to get a lot of mileage out of the single AWS t2.micro instance I keep running,which means I have many different projects running on different paths on a single server.  Everytime I finish a pro">
+<meta name="keywords" content="Web Development">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Static NGINX Locations">
+<meta property="og:url" content="http://yoursite.com/2015/04/01/2015-04-01-NGINX-Static-Locations/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="I try to get a lot of mileage out of the single AWS t2.micro instance I keep running,which means I have many different projects running on different paths on a single server.  Everytime I finish a pro">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-02T08:42:30.966Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="Static NGINX Locations">
+<meta name="twitter:description" content="I try to get a lot of mileage out of the single AWS t2.micro instance I keep running,which means I have many different projects running on different paths on a single server.  Everytime I finish a pro">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -50,7 +55,7 @@
           <li><a class=""
                  href="/index.html">Home</a></li>
         
-          <li><a class="active"
+          <li><a class=""
                  href="/archives/">Archives</a></li>
         
       </ul>
@@ -74,210 +79,97 @@
 
     <div class="row">
         <div class="col-sm-8 blog-main">
-          
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <header class="archive-article-header">
+          <article id="post-2015-04-01-NGINX-Static-Locations" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
     
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/10/02/hello-world/">Hello World 22</a>
+    <h1 class="article-title" itemprop="name">
+      Static NGINX Locations
     </h1>
   
 
 
+  </header>
+
+  <div class="article-meta">
     <div class="article-datetime">
-  <a href="/2018/10/02/hello-world/" class="archive-article-date"><time datetime="2018-10-02T08:35:16.406Z" itemprop="datePublished">October 2nd</time></a>
+  <a href="/2015/04/01/2015-04-01-NGINX-Static-Locations/" class="article-date"><time datetime="2015-03-31T17:00:00.000Z" itemprop="datePublished">2015-04-01</time></a>
 </div>
 
-  </header>
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/NGINX/">NGINX</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>I try to get a lot of mileage out of the single AWS t2.micro instance I keep running,<br>which means I have many different projects running on different paths on a single server.  Everytime I finish a project, I have to relearn how to add new “locations” (paths) to the NGINX virtual host.</p>
+<p>I was really frustrated when I couldn’t figure out how to add a static location for the Jekyll<br>website I created for the game I’m developing.  I kept trying to do something like this:</p>
+<pre><code>location / {
+  root /home/ubuntu/personal-website;
+}
+location /array {
+  root /home/ubuntu/array-website/_site;
+}
+</code></pre><p>But everytime I tried to visit [<a href="http://ptsteadman.com/array]" target="_blank" rel="noopener">http://ptsteadman.com/array]</a>, I would get a 404 error.<br>I tried a bunch of things: I changed the “root” of the the <code>/</code> location to my game website, and it worked.  But no matter what I did, after using <code>sudo service nginx restart</code>,<br>trying to visit the <code>/array</code> location still resulted in a 404.  I couldn’t add the new route/location.</p>
+<p>Eventually, I realized that the text after the slash in the location is the directory that<br>NGINX will try to find in the “root” location.  So, <code>location /array</code> will look for the directory (or file)<br><code>array</code> in whatever directory “root” is set to.  So, I created a symlink to the root of my<br>static jekyll site with the command <code>ln -s /home/ubuntu/array-website/_site /home/ubuntu/array</code>, and<br>then I could set up my nginx config file in <code>sites-enabled</code> as below:</p>
+<pre><code>location / {
+  root /home/ubuntu/personal-website;
+}
+location /array {
+  root /home/ubuntu;
+}
+</code></pre><p>I think this stuff is all pretty obvious to someone who really understands NGINX and file serving,<br>but I only touch NGINX when I’ve finished a project and feel impatient to deploy.  I think it’s very confusing<br>that NGINX seems to handle paths differently between <code>/</code> locations and and <code>/foo</code> locations,<br>but a real understanding of NGINX might clear things up.</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/04/01/2015-04-01-NGINX-Static-Locations/" data-id="cjmslgi230008mw8be8y6ruxl" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-Development/">Web Development</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2015/03/23/2015-03-23-Make-VS-Insert-Spaces/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">Spaces for Newline Indents in VS</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2015/04/05/2015-04-05-Lookup-on-Page/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">Adding Lookup Field to a Page in Dynamics NAV</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
 </article>
-
-  
-    
-    
-      
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <header class="archive-article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/01/02/2016-01-02-Notes-On-Creating-A-Hexo-Theme/">Notes On Creating A Hexo Theme</a>
-    </h1>
-  
-
-
-    <div class="article-datetime">
-  <a href="/2016/01/02/2016-01-02-Notes-On-Creating-A-Hexo-Theme/" class="archive-article-date"><time datetime="2016-01-01T17:00:00.000Z" itemprop="datePublished">January 2nd</time></a>
-</div>
-
-  </header>
-</article>
-
-  
-    
-    
-      
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2015" class="archive-year">2015</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <header class="archive-article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/05/02/2015-05-02-How-To-Impress/">How To Impress Employers at Infosessions</a>
-    </h1>
-  
-
-
-    <div class="article-datetime">
-  <a href="/2015/05/02/2015-05-02-How-To-Impress/" class="archive-article-date"><time datetime="2015-05-01T17:00:00.000Z" itemprop="datePublished">May 2nd</time></a>
-</div>
-
-  </header>
-</article>
-
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <header class="archive-article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/04/08/2015-04-08-NAV-Programming-Resources/">NAV Web Service Programming Resources</a>
-    </h1>
-  
-
-
-    <div class="article-datetime">
-  <a href="/2015/04/08/2015-04-08-NAV-Programming-Resources/" class="archive-article-date"><time datetime="2015-04-07T17:00:00.000Z" itemprop="datePublished">April 8th</time></a>
-</div>
-
-  </header>
-</article>
-
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <header class="archive-article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/04/05/2015-04-05-Lookup-on-Page/">Adding Lookup Field to a Page in Dynamics NAV</a>
-    </h1>
-  
-
-
-    <div class="article-datetime">
-  <a href="/2015/04/05/2015-04-05-Lookup-on-Page/" class="archive-article-date"><time datetime="2015-04-04T17:00:00.000Z" itemprop="datePublished">April 5th</time></a>
-</div>
-
-  </header>
-</article>
-
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <header class="archive-article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/04/01/2015-04-01-NGINX-Static-Locations/">Static NGINX Locations</a>
-    </h1>
-  
-
-
-    <div class="article-datetime">
-  <a href="/2015/04/01/2015-04-01-NGINX-Static-Locations/" class="archive-article-date"><time datetime="2015-03-31T17:00:00.000Z" itemprop="datePublished">April 1st</time></a>
-</div>
-
-  </header>
-</article>
-
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <header class="archive-article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/03/23/2015-03-23-Make-VS-Insert-Spaces/">Spaces for Newline Indents in VS</a>
-    </h1>
-  
-
-
-    <div class="article-datetime">
-  <a href="/2015/03/23/2015-03-23-Make-VS-Insert-Spaces/" class="archive-article-date"><time datetime="2015-03-22T17:00:00.000Z" itemprop="datePublished">March 23rd</time></a>
-</div>
-
-  </header>
-</article>
-
-  
-    
-    
-      
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2014" class="archive-year">2014</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <header class="archive-article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2014/02/23/2014-02-23-hello-world/">Welcome To Hexo</a>
-    </h1>
-  
-
-
-    <div class="article-datetime">
-  <a href="/2014/02/23/2014-02-23-hello-world/" class="archive-article-date"><time datetime="2014-02-22T17:00:00.000Z" itemprop="datePublished">February 23rd</time></a>
-</div>
-
-  </header>
-</article>
-
-  
-  
-    </div></section>
-  
 
 
 
